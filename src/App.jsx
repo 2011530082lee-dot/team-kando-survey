@@ -1,3 +1,26 @@
+import { useState } from "react";
+import { supabase } from "./supabase";
+
+const QUESTIONS = [
+  { id: "nickname", type: "text", title: "呼びやすい名前を教えてください", placeholder: "ニックネームでOKです" },
+  { id: "q1", type: "single", title: "失礼ながらおいくつですか", options: ["20〜24歳", "25〜29歳", "30〜34歳", "35〜39歳", "40歳以上"] },
+  { id: "q2", type: "single", title: "住んでるとこは？", options: ["大阪市中心部（中央区・西区・浪速区・北区など）", "大阪市内その他", "大阪府内（市外）", "兵庫・京都・奈良など近隣", "その他"] },
+  { id: "q3", type: "single", title: "何暮らし？？", options: ["一人暮らし", "パートナーと同棲・結婚（子どもなし）", "子育て中", "実家暮らし", "その他"] },
+  { id: "q4", type: "multi", title: "大阪で「よく行く」とこ", subtitle: "複数選んでOKです", options: ["梅田・北新地", "なんば・心斎橋", "堀江", "天満・中崎町", "阿倍野・天王寺", "うめきた（グラングリーン大阪）", "その他"] },
+  { id: "q5", type: "text", title: "Q4で選んだエリアの中で一番好きなとこ", subtitle: "その理由も教えてください", placeholder: "" },
+  { id: "q6", type: "text", aside: "わかります！めっちゃいいですよね。", title: "逆に「最近あまり行かんな」「昔は行っていたけど今は行かん」とこ", subtitle: "理由も含めて教えてください", placeholder: "" },
+  { id: "q7", type: "text", title: "最近ハマっていること・趣味を", subtitle: "こっそり教えていただけますか", placeholder: "例：レコード収集、筋トレ、キャンプ、コーヒーなど何でも" },
+  { id: "q8", type: "text", title: "直近1ヶ月で「まじでお金を使ってよかった！！」", subtitle: "と思った買い物・体験は何ですか？", placeholder: "" },
+  { id: "q9", type: "single", title: "自分は流行りに敏感な方だと思いますか？", options: ["かなり敏感な方", "まあまあ敏感な方", "普通", "あまり敏感じゃない", "全然"] },
+  { id: "q10", type: "multi", title: "土日何してますか", subtitle: "複数選んでOKです", options: ["家でゆっくり", "カフェや喫茶店でだべる", "ご友人とお食事", "デートとかはナシです", "一人でぶらぶら街歩き・ウィンドウショッピング", "運動・スポーツ", "展示会・映画・ライブなどカルチャー系", "ショッピングモール・商業施設で買い物", "自然界隈（公園、キャンプなど）", "その他"] },
+  { id: "q11", type: "single", title: "誰かとどこかに行くとき、自分から提案する方ですか？", options: ["けっこう提案する派", "誘われたら乗る派", "半々くらい"] },
+  { id: "q12", type: "text", title: "「どこいく〜？なにする〜？」ってなったとき", subtitle: "まず何をしますか？", placeholder: "例：Instagramで検索する、行きつけの場所に提案する、友達に聞く、など" },
+  { id: "q13", type: "text", title: "逆に、一人で「なんかでかけたいな〜」ってなったとき", subtitle: "どこで何しますか？", placeholder: "" },
+  { id: "q14", type: "text", title: "「理想の休日」を1日の流れで", subtitle: "教えてください", placeholder: "例：朝は近所のカフェでモーニング→午後は堀江で服を見て→夕方はご飯" },
+  { id: "q15", type: "text", title: "絶対無理に近いと思いますけど、平日の仕事帰りに", subtitle: "ふらっと立ち寄りたくなる場所・時間の過ごし方はありますか？", placeholder: "" },
+  { id: "q16", type: "text", title: "Instagramでよくチェックしている", subtitle: "好きなインフルエンサー・アカウントがあれば教えてください", placeholder: "ジャンル問わず、複数でもOKです" },
+];
+
 
 const CHOICE_IDS = QUESTIONS.filter((q) => q.type === "single" || q.type === "multi").map((q) => q.id);
 const TEXT_IDS = QUESTIONS.filter((q) => q.type === "text" && q.id !== "nickname").map((q) => q.id);
